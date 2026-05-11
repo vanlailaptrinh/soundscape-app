@@ -1,6 +1,6 @@
 package com.example.soundscape_app.util;
 
-import com.spotify.enums.MediaEnum;
+import com.example.soundscape_app.enums.MediaEnum;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

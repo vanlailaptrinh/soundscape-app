@@ -52,6 +52,58 @@
         <artifactId>mysql-connector-j</artifactId>
     </dependency>
 
+    <!-- Redis -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- OAuth2 Client -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-client</artifactId>
+    </dependency>
+
+    <!-- Google API Client for Auth -->
+    <dependency>
+        <groupId>com.google.api-client</groupId>
+        <artifactId>google-api-client</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-jackson2</artifactId>
+        <version>1.43.3</version>
+    </dependency>
+
+    <!-- Thumbnailator -->
+    <dependency>
+        <groupId>net.coobird</groupId>
+        <artifactId>thumbnailator</artifactId>
+        <version>0.4.20</version>
+    </dependency>
+
+    <!-- MP4Parser -->
+    <dependency>
+        <groupId>org.mp4parser</groupId>
+        <artifactId>isoparser</artifactId>
+        <version>1.9.41</version>
+    </dependency>
+
+    <!-- Spring Boot Mail -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- User Agent Utils -->
+    <dependency>
+        <groupId>eu.bitwalker</groupId>
+        <artifactId>UserAgentUtils</artifactId>
+        <version>1.21</version>
+    </dependency>
+
     <!-- TEST -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -75,6 +127,25 @@
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>s3</artifactId>
         <version>2.25.16</version>
+    </dependency>
+
+    <!-- JSON Web Token -->
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>0.11.5</version>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>0.11.5</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>0.11.5</version>
+        <scope>runtime</scope>
     </dependency>
 </dependencies>
 

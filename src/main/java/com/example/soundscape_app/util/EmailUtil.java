@@ -1,4 +1,4 @@
-package com.spotify.util;
+package com.example.soundscape_app.util;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

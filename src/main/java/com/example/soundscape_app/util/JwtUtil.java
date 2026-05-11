@@ -1,8 +1,8 @@
-package com.spotify.util;
+package com.example.soundscape_app.util;
 
-import com.spotify.exception.TokenBlacklistedException;
-import com.spotify.security.CustomUserDetails;
-import com.spotify.service.auth.JwtBlacklistService;
+import com.example.soundscape_app.exception.TokenBlacklistedException;
+import com.example.soundscape_app.security.CustomUserDetails;
+import com.example.soundscape_app.service.auth.JwtBlacklistService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

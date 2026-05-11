@@ -1,9 +1,9 @@
-package com.spotify.service.auth;
+package com.example.soundscape_app.service.auth;
 
-import com.spotify.entity.auth.Auth;
-import com.spotify.entity.auth.Role;
-import com.spotify.enums.RoleEnum;
-import com.spotify.repository.auth.RoleRepository;
+import com.example.soundscape_app.entity.auth.Auth;
+import com.example.soundscape_app.entity.auth.Role;
+import com.example.soundscape_app.enums.RoleEnum;
+import com.example.soundscape_app.repository.auth.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

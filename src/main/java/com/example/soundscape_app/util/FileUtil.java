@@ -1,7 +1,7 @@
-package com.spotify.util;
+package com.example.soundscape_app.util;
 
-import com.spotify.enums.MediaEnum;
-import com.spotify.exception.InvalidFileTypeException;
+import com.example.soundscape_app.enums.MediaEnum;
+import com.example.soundscape_app.exception.InvalidFileTypeException;
 import org.mp4parser.IsoFile;
 import org.springframework.web.multipart.MultipartFile;
 

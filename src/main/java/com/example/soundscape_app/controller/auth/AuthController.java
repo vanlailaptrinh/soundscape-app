@@ -1,11 +1,11 @@
 package com.example.soundscape_app.controller.auth;
 
-import com.spotify.dto.request.auth.LoginRequest;
-import com.spotify.dto.request.auth.RegisterRequest;
-import com.spotify.dto.request.auth.VerificationRequest;
-import com.spotify.dto.response.global.MessageResponse;
-import com.spotify.dto.response.user.AuthResponse;
-import com.spotify.service.auth.AuthService;
+import com.example.soundscape_app.dto.request.auth.LoginRequest;
+import com.example.soundscape_app.dto.request.auth.RegisterRequest;
+import com.example.soundscape_app.dto.request.auth.VerificationRequest;
+import com.example.soundscape_app.dto.response.global.MessageResponse;
+import com.example.soundscape_app.dto.response.user.AuthResponse;
+import com.example.soundscape_app.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;

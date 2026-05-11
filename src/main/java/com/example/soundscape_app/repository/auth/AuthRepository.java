@@ -1,6 +1,6 @@
-package com.spotify.repository.auth;
+package com.example.soundscape_app.repository.auth;
 
-import com.spotify.entity.auth.Auth;
+import com.example.soundscape_app.entity.auth.Auth;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

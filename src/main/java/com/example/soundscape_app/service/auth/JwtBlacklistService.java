@@ -1,4 +1,4 @@
-package com.spotify.service.auth;
+package com.example.soundscape_app.service.auth;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
