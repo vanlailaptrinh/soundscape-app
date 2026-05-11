@@ -1,4 +1,4 @@
-package com.spotify.util;
+package com.example.soundscape_app.util;
 
 import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;

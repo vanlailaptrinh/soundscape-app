@@ -1,4 +1,4 @@
-package com.spotify.dto.request.auth;
+package com.example.soundscape_app.dto.request.auth;
 
 
 import com.spotify.enums.RoleEnum;

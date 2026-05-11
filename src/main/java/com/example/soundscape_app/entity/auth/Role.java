@@ -1,4 +1,4 @@
-package com.spotify.entity.auth;
+package com.example.soundscape_app.entity.auth;
 
 import com.spotify.enums.RoleEnum;
 import jakarta.persistence.*;

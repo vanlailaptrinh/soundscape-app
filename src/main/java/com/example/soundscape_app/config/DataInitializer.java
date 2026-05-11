@@ -1,11 +1,11 @@
-package com.spotify.config;
+package com.example.soundscape_app.config;
 
-import com.spotify.entity.auth.Role;
-import com.spotify.entity.song.Genre;
-import com.spotify.enums.GenreEnum;
-import com.spotify.enums.RoleEnum;
-import com.spotify.repository.auth.RoleRepository;
-import com.spotify.repository.song.SongGenreRepository;
+import com.example.soundscape_app.entity.auth.Role;
+import com.example.soundscape_app.entity.song.Genre;
+import com.example.soundscape_app.enums.GenreEnum;
+import com.example.soundscape_app.enums.RoleEnum;
+import com.example.soundscape_app.repository.auth.RoleRepository;
+import com.example.soundscape_app.repository.song.SongGenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

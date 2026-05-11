@@ -1,4 +1,4 @@
-package com.spotify.controller.auth;
+package com.example.soundscape_app.controller.auth;
 
 import com.spotify.dto.request.auth.LoginRequest;
 import com.spotify.dto.request.auth.RegisterRequest;

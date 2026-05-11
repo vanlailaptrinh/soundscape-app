@@ -1,4 +1,4 @@
-package com.spotify.dto.response.user;
+package com.example.soundscape_app.dto.response.user;
 
 import com.spotify.enums.RoleEnum;
 import lombok.AllArgsConstructor;

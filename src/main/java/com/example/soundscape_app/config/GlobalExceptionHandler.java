@@ -1,6 +1,6 @@
-package com.spotify.config;
+package com.example.soundscape_app.config;
 
-import com.spotify.dto.response.global.GlobalErrorResponse;
+import com.example.soundscape_app.dto.response.global.GlobalErrorResponse;
 import com.spotify.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;

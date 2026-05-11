@@ -1,4 +1,4 @@
-package com.spotify.entity.auth;
+package com.example.soundscape_app.entity.auth;
 
 import jakarta.persistence.*;
 import lombok.Getter;

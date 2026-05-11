@@ -1,6 +1,6 @@
-package com.spotify.config;
+package com.example.soundscape_app.config;
 
-import com.spotify.security.CustomUserDetailsService;
+import com.example.soundscape_app.security.CustomUserDetailsService;
 import com.spotify.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

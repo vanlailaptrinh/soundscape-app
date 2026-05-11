@@ -1,4 +1,4 @@
-package com.spotify.dto.response.user;
+package com.example.soundscape_app.dto.response.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

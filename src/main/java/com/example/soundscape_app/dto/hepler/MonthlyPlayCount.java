@@ -1,4 +1,4 @@
-package com.spotify.dto.hepler;
+package com.example.soundscape_app.dto.hepler;
 
 
 public interface MonthlyPlayCount {

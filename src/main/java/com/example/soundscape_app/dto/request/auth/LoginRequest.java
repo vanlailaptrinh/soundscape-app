@@ -1,4 +1,4 @@
-package com.spotify.dto.request.auth;
+package com.example.soundscape_app.dto.request.auth;
 
 import lombok.Getter;
 import lombok.Setter;

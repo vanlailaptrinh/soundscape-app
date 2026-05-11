@@ -1,4 +1,4 @@
-package com.spotify.util;
+package com.example.soundscape_app.util;
 
 import com.spotify.enums.MediaEnum;
 import net.coobird.thumbnailator.Thumbnails;
