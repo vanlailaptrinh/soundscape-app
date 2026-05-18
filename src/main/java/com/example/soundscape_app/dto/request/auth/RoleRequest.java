@@ -1,7 +1,7 @@
 package com.example.soundscape_app.dto.request.auth;
 
 
-import com.spotify.enums.RoleEnum;
+import com.example.soundscape_app.enums.RoleEnum;
 import lombok.Data;
 
 @Data

@@ -1,7 +1,7 @@
 package com.example.soundscape_app.dto.response.user;
 
-import com.spotify.enums.AccountStatusEnum;
-import com.spotify.enums.RoleEnum;
+import com.example.soundscape_app.enums.AccountStatusEnum;
+import com.example.soundscape_app.enums.RoleEnum;
 import lombok.Data;
 
 import java.util.Set;

@@ -1,7 +1,7 @@
 package com.example.soundscape_app.config;
 
 import com.example.soundscape_app.dto.response.global.GlobalErrorResponse;
-import com.spotify.exception.*;
+import com.example.soundscape_app.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 

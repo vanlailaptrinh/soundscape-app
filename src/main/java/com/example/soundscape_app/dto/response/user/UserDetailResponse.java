@@ -1,6 +1,6 @@
 package com.example.soundscape_app.dto.response.user;
 
-import com.spotify.enums.RoleEnum;
+import com.example.soundscape_app.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,10 @@
 package com.example.soundscape_app.entity.song;
 
+import com.example.soundscape_app.entity.album.AlbumItem;
 import com.example.soundscape_app.entity.auth.Auth;
+import com.example.soundscape_app.entity.playlist.PlaylistItem;
 import com.example.soundscape_app.enums.MediaEnum;
+import com.example.soundscape_app.enums.SongStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,6 +16,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
