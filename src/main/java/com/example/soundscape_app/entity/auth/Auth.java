@@ -1,10 +1,10 @@
 package com.example.soundscape_app.entity.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.spotify.entity.album.Album;
-import com.spotify.entity.song.ListeningHistory;
+import com.example.soundscape_app.entity.album.Album;
+import com.example.soundscape_app.entity.song.ListeningHistory;
 import com.example.soundscape_app.entity.song.Song;
-import com.spotify.enums.AccountStatusEnum;
+import com.example.soundscape_app.enums.AccountStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
