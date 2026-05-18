@@ -1,6 +1,6 @@
 package com.example.soundscape_app.entity.auth;
 
-import com.spotify.enums.RoleEnum;
+import com.example.soundscape_app.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
