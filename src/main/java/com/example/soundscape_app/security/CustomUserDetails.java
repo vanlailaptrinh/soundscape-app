@@ -2,6 +2,7 @@ package com.example.soundscape_app.security;
 import com.example.soundscape_app.entity.auth.Auth;
 import com.example.soundscape_app.entity.auth.Role;
 import com.example.soundscape_app.enums.RoleEnum;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;

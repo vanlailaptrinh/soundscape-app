@@ -1,7 +1,7 @@
 package com.example.soundscape_app.dto.response.user;
 
-import com.spotify.dto.response.album.AlbumResponse;
-import com.spotify.dto.response.song.PlaylistResponse;
+import com.example.soundscape_app.dto.response.album.AlbumResponse;
+import com.example.soundscape_app.dto.response.song.PlaylistResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
