@@ -112,21 +112,204 @@ public class SendAndVerifyCodeService {
     }
 
     private String buildHtml(String username, String verifyLink) {
-        String safeUsername = username == null ? "" : username;
+        String safeUsername = username == null ? "Listener" : escapeHtml(username);
+
         return """
-                <div style="font-family:Arial,sans-serif;line-height:1.5">
-                  <h2>Email verification</h2>
-                  <p>Hi %s,</p>
-                  <p>Click the button below to verify your email address.</p>
-                  <p>
-                    <a href="%s" style="display:inline-block;padding:10px 16px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px">
-                      Verify email
-                    </a>
-                  </p>
-                  <p>If you didn’t create an account, you can ignore this email.</p>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Verify Email</title>
+            </head>
+
+            <body style="
+                margin:0;
+                padding:0;
+                background:#000000;
+                font-family:Arial,sans-serif;
+                color:#ffffff;
+            ">
+
+                <div style="
+                    width:100%%;
+                    padding:50px 20px;
+                    background:
+                        radial-gradient(circle at top left, rgba(30,215,96,0.25), transparent 35%%),
+                        radial-gradient(circle at bottom right, rgba(30,215,96,0.15), transparent 30%%),
+                        #000000;
+                ">
+
+                    <div style="
+                        max-width:620px;
+                        margin:0 auto;
+                        background:#121212;
+                        border-radius:28px;
+                        overflow:hidden;
+                        border:1px solid rgba(255,255,255,0.06);
+                        box-shadow:0 0 40px rgba(30,215,96,0.15);
+                    ">
+
+                        <div style="
+                            padding:50px 40px 30px;
+                            text-align:center;
+                            background:
+                                linear-gradient(
+                                    180deg,
+                                    rgba(30,215,96,0.18),
+                                    rgba(18,18,18,1)
+                                );
+                        ">
+
+                            <div style="
+                                width:90px;
+                                height:90px;
+                                margin:0 auto 24px;
+                                border-radius:50%%;
+                                background:#1ed760;
+                                text-align: center;
+                                line-height: 90px;
+                                box-shadow:0 0 30px rgba(30,215,96,0.6);
+                            ">
+                               <img src="https://img.icons8.com/ios-filled/50/000000/spotify.png" 
+                                       width="42" 
+                                       height="42" 
+                                       alt="Spotify"
+                                       style="display: inline-block; vertical-align: middle; margin: 0;"/>
+                            </div>
+
+                            <h1 style="
+                                margin:0;
+                                font-size:38px;
+                                font-weight:800;
+                                letter-spacing:1px;
+                                color:#ffffff;
+                            ">
+                                Musicify
+                            </h1>
+
+                            <p style="
+                                margin-top:14px;
+                                color:#b3b3b3;
+                                font-size:16px;
+                                line-height:1.6;
+                            ">
+                                Stream your vibe. Discover your sound.
+                            </p>
+
+                        </div>
+
+                        <div style="padding:45px 40px;">
+
+                            <p style="
+                                margin:0 0 18px;
+                                font-size:20px;
+                                color:#ffffff;
+                            ">
+                                Hi <strong style="color:#1ed760;">%s</strong>,
+                            </p>
+
+                            <p style="
+                                margin:0;
+                                color:#b3b3b3;
+                                font-size:15px;
+                                line-height:1.8;
+                            ">
+                                You're one step away from unlocking millions of tracks,
+                                curated playlists, and immersive listening experiences.
+                                Verify your email to activate your account.
+                            </p>
+
+                            <div style="text-align:center;margin:42px 0;">
+
+                                <a href="%s" style="
+                                    display:inline-block;
+                                    padding:18px 40px;
+                                    background:#1ed760;
+                                    color:#000000;
+                                    text-decoration:none;
+                                    border-radius:999px;
+                                    font-size:16px;
+                                    font-weight:800;
+                                    letter-spacing:0.5px;
+                                    box-shadow:0 0 25px rgba(30,215,96,0.45);
+                                ">
+                                    VERIFY EMAIL
+                                </a>
+
+                            </div>
+
+                            <div style="
+                                background:#181818;
+                                border-radius:18px;
+                                padding:22px;
+                                border:1px solid rgba(255,255,255,0.05);
+                            ">
+
+                                <p style="
+                                    margin:0 0 10px;
+                                    color:#1ed760;
+                                    font-size:14px;
+                                    font-weight:700;
+                                ">
+                                    Why verify?
+                                </p>
+
+                                <ul style="
+                                    padding-left:18px;
+                                    margin:0;
+                                    color:#d1d5db;
+                                    line-height:1.8;
+                                    font-size:14px;
+                                ">
+                                    <li>Create and save playlists</li>
+                                    <li>Get personalized recommendations</li>
+                                    <li>Sync music across devices</li>
+                                    <li>Follow artists and podcasts</li>
+                                </ul>
+
+                            </div>
+
+                            <p style="
+                                margin-top:28px;
+                                color:#6b7280;
+                                font-size:13px;
+                                line-height:1.7;
+                            ">
+                                If you didn’t sign up for Musicify,
+                                you can safely ignore this email.
+                            </p>
+
+                        </div>
+
+                        <div style="
+                            padding:24px;
+                            text-align:center;
+                            background:#0b0b0b;
+                            border-top:1px solid rgba(255,255,255,0.05);
+                        ">
+
+                            <p style="
+                                margin:0;
+                                color:#6b7280;
+                                font-size:12px;
+                                letter-spacing:0.5px;
+                            ">
+                                © 2026 spotify • All rights reserved
+                            </p>
+
+                        </div>
+
+                    </div>
+
                 </div>
-                """.formatted(escapeHtml(safeUsername), verifyLink);
+
+            </body>
+            </html>
+            """.formatted(safeUsername, verifyLink);
     }
+
+
 
     private String escapeHtml(String value) {
         return value.replace("&", "&amp;")
