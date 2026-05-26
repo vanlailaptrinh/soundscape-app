@@ -119,31 +119,50 @@ public class AuthService {
         if (user.isPresent() && user.get().getPassword() != null) {
             throw new EmailAlreadyExistsException("Email already exists!");
         }
+        
+        Auth authToVerify = user.orElseGet(() -> {
+            Auth newAuth = new Auth();
+            newAuth.setEmail(request.getEmail());
+            newAuth.setStatus(AccountStatusEnum.PENDING);
+            return authRepository.save(newAuth);
+        });
+
         storeTemporaryPassword(request.getEmail(), passwordEncoder.encode(request.getPassword()));
-        sendAndVerifyCodeService.sendVerificationCode(request.getEmail());
-        return new MessageResponse("Verification code sent successfully! Please verify your email.");
+        sendAndVerifyCodeService.sendVerificationEmail(authToVerify);
+        return new MessageResponse("Verification email sent successfully! Please check your inbox.");
     }
 
-    public AuthResponse completeRegistration(String email, String verificationCode, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        if (!sendAndVerifyCodeService.verifyCode(email, verificationCode)) {
-            throw new IllegalArgumentException("Invalid or expired verification code!");
-        }
+    public AuthResponse completeRegistration(String token, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        Auth auth = sendAndVerifyCodeService.verifyEmail(token);
 
         // Lấy lại mật khẩu đã lưu tạm thời từ Redis
-        String encodedPassword = retrieveTemporaryPassword(email);
+        String encodedPassword = retrieveTemporaryPassword(auth.getEmail());
         if (encodedPassword == null) {
             throw new IllegalArgumentException("No registration request found. Please start over.");
         }
-        Optional<Auth> optionUser = authRepository.findByEmail(email);
-        Auth auth;
-        if (optionUser.isPresent() && optionUser.get().getPassword() == null) {
-            auth = addPassWord(optionUser.get(), encodedPassword);
-        } else {
+        
+        if (auth.getPassword() == null) {
+            auth = addPassWord(auth, encodedPassword);
             List<RoleEnum> roleEnums = List.of(RoleEnum.USER);
-            auth = createUserWithHashedPassword(email, encodedPassword, roleEnums);
+            auth = assignRoles(auth, roleEnums);
         }
+        
+        // Cập nhật trạng thái tài khoản thành ACTIVE
+        auth.setStatus(AccountStatusEnum.ACTIVE);
+        authRepository.save(auth);
+        
         initValueService.initPlayListForUser(auth);
         return buildAuthResponse(auth, httpRequest, httpResponse, "Auth registered successfully!");
+    }
+    
+    private Auth assignRoles(Auth auth, List<RoleEnum> roleEnums) {
+        Set<Role> roleEntities = roleEnums.stream()
+                .map(roleEnum -> roleRepository.findByName(roleEnum)
+                        .orElseThrow(() -> new RuntimeException("Role '" + roleEnum.name() + "' not found")))
+                .collect(Collectors.toSet());
+
+        auth.setRoleEntities(roleEntities);
+        return authRepository.save(auth);
     }
 
     public MessageResponse logout(String authorizationHeader, HttpServletRequest request) {

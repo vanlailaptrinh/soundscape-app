@@ -9,8 +9,11 @@ import com.example.soundscape_app.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,11 +32,10 @@ public class AuthController {
         return authService.initiateRegistration(request);
     }
 
-    @PostMapping("/register-verify")
-    public AuthResponse verifyRegistration(@RequestBody VerificationRequest verificationCode,
+    @GetMapping("/register-verify")
+    public AuthResponse verifyRegistration(@RequestParam("token") String token,
                                            HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        return authService.completeRegistration(verificationCode.getEmail(),
-                verificationCode.getVerificationCode(), httpRequest, httpResponse
+        return authService.completeRegistration(token, httpRequest, httpResponse
         );
     }
 
