@@ -131,6 +131,13 @@
         <version>2.5.0</version>
     </dependency>
 
+    <!-- dotenv -->
+    <dependency>
+        <groupId>me.paulschwarz</groupId>
+        <artifactId>spring-dotenv</artifactId>
+        <version>4.0.0</version>
+    </dependency>
+
     <!-- TEST -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
