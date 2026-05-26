@@ -92,6 +92,6 @@ public class Auth {
     private List<Album> albums = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
-    private AccountStatusEnum status = AccountStatusEnum.ACTIVE;
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'PENDING'")
+    private AccountStatusEnum status = AccountStatusEnum.PENDING;
 }
