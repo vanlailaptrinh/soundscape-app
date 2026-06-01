@@ -35,13 +35,11 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             ) t ON t.song_id = s.id
             WHERE s.status <> 'BANNED'
             ORDER BY COALESCE(t.score, 0) DESC
-            """,
-            countQuery = """
-                    SELECT COUNT(*)
-                    FROM songs s
-                    WHERE s.status <> 'BANNED'
-                    """,
-            nativeQuery = true)
+            """, countQuery = """
+            SELECT COUNT(*)
+            FROM songs s
+            WHERE s.status <> 'BANNED'
+            """, nativeQuery = true)
     Page<SongTrendingResponse> findTrendingSongs(@Param("tau") double tau, Pageable pageable);
 
     List<Song> findByAuthId(Long authId);
@@ -67,28 +65,26 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             ) sub
             WHERE sub.rn = 1
             ORDER BY sub.listened_at DESC
-            """,
-            countQuery = """
-                    SELECT COUNT(*)
-                    FROM (
-                        SELECT ROW_NUMBER() OVER (PARTITION BY lh.song_id ORDER BY lh.listened_at DESC) AS rn
-                        FROM listening_history lh
-                        JOIN songs s ON lh.song_id = s.id
-                        WHERE lh.auth_id = :authId
-                          AND s.status <> 'BANNED'
-                    ) sub
-                    WHERE sub.rn = 1
-                    """,
-            nativeQuery = true)
+            """, countQuery = """
+            SELECT COUNT(*)
+            FROM (
+                SELECT ROW_NUMBER() OVER (PARTITION BY lh.song_id ORDER BY lh.listened_at DESC) AS rn
+                FROM listening_history lh
+                JOIN songs s ON lh.song_id = s.id
+                WHERE lh.auth_id = :authId
+                  AND s.status <> 'BANNED'
+            ) sub
+            WHERE sub.rn = 1
+            """, nativeQuery = true)
     Page<ListeningHistoryResponse> findUniqueListeningHistory(@Param("authId") Long authId, Pageable pageable);
 
     @Query(value = """
             WITH normalized_search AS (
-                SELECT 
+                SELECT
                     unaccent(lower(:keyword)) AS norm_keyword,
                     NULL::tsquery AS norm_tsquery
             )
-            SELECT 
+            SELECT
                 s.id AS id,
                 s.title AS title,
                 s.image_url AS imageUrl,
@@ -98,14 +94,14 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             FROM songs s
             JOIN auths a ON s.auth_id = a.id
             CROSS JOIN normalized_search ns
-            WHERE 
+            WHERE
                 s.status <> 'BANNED'
                 AND (
                     similarity(unaccent(lower(s.title)), ns.norm_keyword) > 0
                     OR unaccent(lower(s.title)) LIKE '%' || ns.norm_keyword || '%'
                 )
-            ORDER BY 
-                CASE 
+            ORDER BY
+                CASE
                     WHEN unaccent(lower(s.title)) = ns.norm_keyword THEN 1
                     WHEN unaccent(lower(s.title)) LIKE ns.norm_keyword || '%' THEN 2
                     ELSE 3
@@ -113,12 +109,10 @@ public interface SongRepository extends JpaRepository<Song, Long> {
                 similarity(unaccent(lower(s.title)), ns.norm_keyword) DESC,
                 s.created_at DESC
             LIMIT 10
-            """,
-            nativeQuery = true)
+            """, nativeQuery = true)
     List<SongTrendingResponse> findByNormalizedSearch(@Param("keyword") String keyword);
 
     @Query("SELECT COUNT(s) FROM Song s WHERE s.auth.id = :userId AND s.status <> 'BANNED'")
     long countSongsByUser(Long userId);
-
 
 }

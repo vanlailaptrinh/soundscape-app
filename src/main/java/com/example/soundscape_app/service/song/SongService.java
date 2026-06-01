@@ -1,4 +1,5 @@
 package com.example.soundscape_app.service.song;
+
 import com.example.soundscape_app.controller.song.ListSongResponse;
 import com.example.soundscape_app.dto.request.song.SongRequest;
 import com.example.soundscape_app.dto.response.song.ListeningHistoryResponse;
@@ -35,8 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-
 @Service
 @RequiredArgsConstructor
 public class SongService {
@@ -57,12 +56,11 @@ public class SongService {
     }
 
     private Song createAndSaveSong(SongRequest songRequest,
-                                   Auth auth,
-                                   Album album,
-                                   String urlImage,
-                                   String urlMedia,
-                                   Map<String, Object> audioFeatures) {
-
+            Auth auth,
+            Album album,
+            String urlImage,
+            String urlMedia,
+            Map<String, Object> audioFeatures) {
 
         Song song = Song.builder()
                 .title(songRequest.getTitle())
@@ -83,6 +81,7 @@ public class SongService {
                 .liveness(asDouble(audioFeatures.get("liveness")))
                 .speechiness(asDouble(audioFeatures.get("speechiness")))
                 .valence(asDouble(audioFeatures.get("valence")))
+                .status(SongStatusEnum.ACTIVE)
                 .build();
 
         if (album != null) {
@@ -93,7 +92,8 @@ public class SongService {
     }
 
     private Double asDouble(Object obj) {
-        if (obj == null) return null;
+        if (obj == null)
+            return null;
         if (obj instanceof Number) {
             return ((Number) obj).doubleValue();
         }
@@ -105,32 +105,48 @@ public class SongService {
     }
 
     private Map<String, Object> analyzeMediaWithFlask(MultipartFile file) throws Exception {
-        String flaskUrl = "http://localhost:5001/analyze";
-        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> dummyData = new HashMap<>();
+        dummyData.put("duration", 215.0);
+        dummyData.put("tempo", 120.0);
+        dummyData.put("energy", 0.8);
+        dummyData.put("loudness", -5.0);
+        dummyData.put("danceability", 0.7);
+        dummyData.put("acousticness", 0.1);
+        dummyData.put("instrumentalness", 0.0);
+        dummyData.put("liveness", 0.2);
+        dummyData.put("speechiness", 0.05);
+        dummyData.put("valence", 0.6);
+        return dummyData;
+        // String flaskUrl = "http://localhost:5001/analyze";
+        // RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        // HttpHeaders headers = new HttpHeaders();
+        // headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        // Tạo resource từ file gửi đi
-        ByteArrayResource resource = new ByteArrayResource(file.getBytes()) {
-            @Override
-            public String getFilename() {
-                return file.getOriginalFilename(); // Rất quan trọng! Flask cần tên file để nhận đúng
-            }
-        };
+        // // Tạo resource từ file gửi đi
+        // ByteArrayResource resource = new ByteArrayResource(file.getBytes()) {
+        // @Override
+        // public String getFilename() {
+        // return file.getOriginalFilename(); // Rất quan trọng! Flask cần tên file để
+        // nhận đúng
+        // }
+        // };
 
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", resource);
+        // MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        // body.add("file", resource);
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        // HttpEntity<MultiValueMap<String, Object>> requestEntity = new
+        // HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(flaskUrl, requestEntity, Map.class);
+        // ResponseEntity<Map> response = restTemplate.postForEntity(flaskUrl,
+        // requestEntity, Map.class);
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Flask analyze API error: " + response.getStatusCode());
-        }
+        // if (response.getStatusCode().is2xxSuccessful()) {
+        // return response.getBody();
+        // } else {
+        // throw new RuntimeException("Flask analyze API error: " +
+        // response.getStatusCode());
+        // }
     }
 
     private boolean isBannedSong(Long songId) {
@@ -159,22 +175,26 @@ public class SongService {
 
     @Transactional
     public void listenSong(String authorizationHeader, Long songId) {
-        if (isBannedSong(songId)) throw new RuntimeException("This song is banned.");
+        if (isBannedSong(songId))
+            throw new RuntimeException("This song is banned.");
 
         Song song = songRepository.findById(songId).orElse(null);
         Auth user = authService.getAuthFromAccessToken(authorizationHeader);
 
-        if (song == null || user == null) return;
+        if (song == null || user == null)
+            return;
         listeningHistoryService.addListeningHistory(user, song);
     }
 
     public void calDurationSong(String authorizationHeader, Long songId) {
-        if (isBannedSong(songId)) return;
+        if (isBannedSong(songId))
+            return;
 
         Song song = songRepository.findById(songId).orElse(null);
         Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
 
-        if (song == null || auth == null) return;
+        if (song == null || auth == null)
+            return;
         long delta = listeningHistoryService.updateListeningDuration(auth, song);
         if (delta > song.getDuration() / 2) {
             song.setPlayCount(song.getPlayCount() + 1);
@@ -197,22 +217,26 @@ public class SongService {
     }
 
     public boolean isSongInAnyAlbum(Long songId) {
-        if (isBannedSong(songId)) return false;
+        if (isBannedSong(songId))
+            return false;
 
         Song song = songRepository.findById(songId).orElse(null);
-        if (song == null) return false;
+        if (song == null)
+            return false;
 
         return song.getAlbumItems() != null && !song.getAlbumItems().isEmpty();
     }
 
     public Song getSongById(Long songId) {
-        if (isBannedSong(songId)) return null;
+        if (isBannedSong(songId))
+            return null;
         return songRepository.findById(songId).orElse(null);
     }
 
     public SongResponse getSongResponseById(Long songId) {
         Song song = getSongById(songId);
-        if (song == null) return null;
+        if (song == null)
+            return null;
         return songMapper.toSongResponse(song);
     }
 
@@ -288,14 +312,20 @@ public class SongService {
 
         // --- Map sang DTO SongTrendingResponse có cả thông tin nghệ sĩ ---
         List<SongTrendingResponse> songResponses = pagedSongs.stream()
-                .map(song -> new SongTrendingResponse(
-                        song.getId(),
-                        song.getTitle(),
-                        song.getImageUrl(),
-                        song.getAuthor(),
-                        song.getAuth() != null ? song.getAuth().getId() : null,
-                        song.getAuth() != null ? song.getAuth().getUsername() : null
-                ))
+                .<SongTrendingResponse>map(song -> new SongTrendingResponse() {
+                    @Override
+                    public Long getId() { return song.getId(); }
+                    @Override
+                    public String getTitle() { return song.getTitle(); }
+                    @Override
+                    public String getImageUrl() { return song.getImageUrl(); }
+                    @Override
+                    public String getAuthor() { return song.getAuthor(); }
+                    @Override
+                    public Long getArtistId() { return song.getAuth() != null ? song.getAuth().getId() : null; }
+                    @Override
+                    public String getUsername() { return song.getAuth() != null ? song.getAuth().getUsername() : null; }
+                })
                 .toList();
 
         return new PageImpl<>(songResponses, pageable, recommendedSongs.size());
@@ -355,6 +385,5 @@ public class SongService {
     public String unblockSong(Long songId) {
         return updateSongStatus(songId, SongStatusEnum.ACTIVE);
     }
-
 
 }
