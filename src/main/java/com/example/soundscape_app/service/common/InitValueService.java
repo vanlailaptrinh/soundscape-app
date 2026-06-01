@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InitValueService {
     private final PlayListRepository playListRepository;
-    private final String DEFAULT_PLAYLIST_IMAGE_URL = "https://spotifybe.s3.ap-southeast-1.amazonaws.com/asset/defaultvalue/playlistdefault.jpg";
+    private final String DEFAULT_PLAYLIST_IMAGE_URL = "https://soundscape-app-storage.s3.ap-southeast-1.amazonaws.com/asset/image/1780329762871.jpg";
 
     public void initPlayListForUser(Auth auth) {
         Playlist playlist = new Playlist();

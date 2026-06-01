@@ -4,6 +4,7 @@ import com.example.soundscape_app.dto.request.song.SongRequest;
 import com.example.soundscape_app.dto.response.song.ListeningHistoryResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
 import com.example.soundscape_app.dto.response.song.SongTrendingResponse;
+import com.example.soundscape_app.dto.response.song.SongWithArtistResponse;
 import com.example.soundscape_app.service.song.SongService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -29,6 +30,17 @@ public class SongController {
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(defaultValue = "7") double tau) {
         return songService.getTrendingSongs(pageable, tau);
+    }
+
+    @GetMapping("/open/songs/recent")
+    public Page<SongTrendingResponse> getRecentSongs(
+            @PageableDefault(size = 10) Pageable pageable) {
+        return songService.getRecentSongs(pageable);
+    }
+
+    @GetMapping("/open/songs/{songId}")
+    public ResponseEntity<SongWithArtistResponse> getSongWithArtist(@PathVariable Long songId) {
+        return ResponseEntity.ok(songService.getSongWithArtist(songId));
     }
 
 

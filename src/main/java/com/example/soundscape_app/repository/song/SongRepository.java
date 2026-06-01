@@ -115,4 +115,20 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     @Query("SELECT COUNT(s) FROM Song s WHERE s.auth.id = :userId AND s.status <> 'BANNED'")
     long countSongsByUser(Long userId);
 
+    @Query(value = """
+            SELECT s.id,
+                   s.title,
+                   s.image_url AS imageUrl,
+                   s.author,
+                   auths.id   AS artistId,
+                   auths.username AS username
+            FROM songs s
+            JOIN auths ON s.auth_id = auths.id
+            WHERE s.status <> 'BANNED'
+            ORDER BY s.created_at DESC
+            """, countQuery = """
+            SELECT COUNT(*) FROM songs s WHERE s.status <> 'BANNED'
+            """, nativeQuery = true)
+    Page<SongTrendingResponse> findRecentSongs(Pageable pageable);
+
 }

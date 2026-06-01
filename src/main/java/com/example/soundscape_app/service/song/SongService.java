@@ -6,6 +6,8 @@ import com.example.soundscape_app.dto.response.song.ListeningHistoryResponse;
 import com.example.soundscape_app.dto.response.song.SongDetailResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
 import com.example.soundscape_app.dto.response.song.SongTrendingResponse;
+import com.example.soundscape_app.dto.response.song.SongWithArtistResponse;
+import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import com.example.soundscape_app.entity.album.Album;
 import com.example.soundscape_app.entity.album.AlbumItem;
 import com.example.soundscape_app.entity.auth.Auth;
@@ -266,69 +268,80 @@ public class SongService {
     }
 
     public Page<SongTrendingResponse> getListSongsRecommend(String authorizationHeader, Pageable pageable) {
-        Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
-        Long userId = auth.getId();
+        try {
+            Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
+            Long userId = auth.getId();
 
-        String flaskUrl = "http://127.0.0.1:5001/recommend/hybrid?user_id=" + userId;
-        RestTemplate restTemplate = new RestTemplate();
+            String flaskUrl = "http://127.0.0.1:5001/recommend/hybrid?user_id=" + userId;
+            RestTemplate restTemplate = new RestTemplate();
 
-        // --- Gọi Flask API ---
-        ResponseEntity<Map> response = restTemplate.getForEntity(flaskUrl, Map.class);
-        Map<String, Object> body = response.getBody();
+            // --- Gọi Flask API ---
+            ResponseEntity<Map> response = restTemplate.getForEntity(flaskUrl, Map.class);
+            Map<String, Object> body = response.getBody();
 
-        if (body == null || !body.containsKey("recommendations")) {
+            if (body == null || !body.containsKey("recommendations")) {
+                return Page.empty(pageable);
+            }
+
+            List<Integer> recommendedIdsInt = (List<Integer>) body.get("recommendations");
+            if (recommendedIdsInt == null || recommendedIdsInt.isEmpty()) {
+                return Page.empty(pageable);
+            }
+
+            List<Long> recommendedIds = recommendedIdsInt.stream()
+                    .map(Integer::longValue)
+                    .toList();
+
+            List<Song> recommendedSongs = songRepository.findAllById(recommendedIds);
+
+            // Filter out banned songs
+            recommendedSongs = recommendedSongs.stream()
+                    .filter(song -> song.getStatus() != SongStatusEnum.BANNED)
+                    .collect(Collectors.toList());
+
+            Map<Long, Integer> orderMap = new HashMap<>();
+            for (int i = 0; i < recommendedIds.size(); i++) {
+                orderMap.put(recommendedIds.get(i), i);
+            }
+            recommendedSongs.sort(Comparator.comparingInt(song -> orderMap.getOrDefault(song.getId(), Integer.MAX_VALUE)));
+
+            int start = (int) pageable.getOffset();
+            int end = Math.min(start + pageable.getPageSize(), recommendedSongs.size());
+            if (start > end) {
+                return Page.empty(pageable);
+            }
+
+            List<Song> pagedSongs = recommendedSongs.subList(start, end);
+
+            // --- Map sang DTO SongTrendingResponse có cả thông tin nghệ sĩ ---
+            List<SongTrendingResponse> songResponses = pagedSongs.stream()
+                    .<SongTrendingResponse>map(song -> new SongTrendingResponse() {
+                        @Override
+                        public Long getId() { return song.getId(); }
+                        @Override
+                        public String getTitle() { return song.getTitle(); }
+                        @Override
+                        public String getImageUrl() { return song.getImageUrl(); }
+                        @Override
+                        public String getAuthor() { return song.getAuthor(); }
+                        @Override
+                        public Long getArtistId() { return song.getAuth() != null ? song.getAuth().getId() : null; }
+                        @Override
+                        public String getUsername() { return song.getAuth() != null ? song.getAuth().getUsername() : null; }
+                    })
+                    .toList();
+
+            return new PageImpl<>(songResponses, pageable, recommendedSongs.size());
+
+        } catch (Exception e) {
+            // Flask không chạy hoặc lỗi → trả về empty (FE sẽ fallback sang trending)
+            System.out.println("[Recommend] Flask unavailable, returning empty: " + e.getMessage());
             return Page.empty(pageable);
         }
+    }
 
-        List<Integer> recommendedIdsInt = (List<Integer>) body.get("recommendations");
-        if (recommendedIdsInt == null || recommendedIdsInt.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        List<Long> recommendedIds = recommendedIdsInt.stream()
-                .map(Integer::longValue)
-                .toList();
-
-        List<Song> recommendedSongs = songRepository.findAllById(recommendedIds);
-
-        // Filter out banned songs
-        recommendedSongs = recommendedSongs.stream()
-                .filter(song -> song.getStatus() != SongStatusEnum.BANNED)
-                .collect(Collectors.toList());
-
-        Map<Long, Integer> orderMap = new HashMap<>();
-        for (int i = 0; i < recommendedIds.size(); i++) {
-            orderMap.put(recommendedIds.get(i), i);
-        }
-        recommendedSongs.sort(Comparator.comparingInt(song -> orderMap.getOrDefault(song.getId(), Integer.MAX_VALUE)));
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), recommendedSongs.size());
-        if (start > end) {
-            return Page.empty(pageable);
-        }
-
-        List<Song> pagedSongs = recommendedSongs.subList(start, end);
-
-        // --- Map sang DTO SongTrendingResponse có cả thông tin nghệ sĩ ---
-        List<SongTrendingResponse> songResponses = pagedSongs.stream()
-                .<SongTrendingResponse>map(song -> new SongTrendingResponse() {
-                    @Override
-                    public Long getId() { return song.getId(); }
-                    @Override
-                    public String getTitle() { return song.getTitle(); }
-                    @Override
-                    public String getImageUrl() { return song.getImageUrl(); }
-                    @Override
-                    public String getAuthor() { return song.getAuthor(); }
-                    @Override
-                    public Long getArtistId() { return song.getAuth() != null ? song.getAuth().getId() : null; }
-                    @Override
-                    public String getUsername() { return song.getAuth() != null ? song.getAuth().getUsername() : null; }
-                })
-                .toList();
-
-        return new PageImpl<>(songResponses, pageable, recommendedSongs.size());
+    public Page<SongTrendingResponse> getRecentSongs(Pageable pageable) {
+        return songRepository.findRecentSongs(pageable);
     }
 
     public List<SongResponse> getMySongs(String authorizationHeader) {
@@ -349,6 +362,33 @@ public class SongService {
         return allSongs.stream()
                 .filter(song -> song.getStatus() != SongStatusEnum.BANNED)
                 .count();
+    }
+
+    public SongWithArtistResponse getSongWithArtist(Long songId) {
+        Song song = songRepository.findById(songId)
+                .orElseThrow(() -> new RuntimeException("Song not found: " + songId));
+
+        if (song.getStatus() == SongStatusEnum.BANNED) {
+            throw new RuntimeException("Song is not available");
+        }
+
+        SongResponse songResponse = songMapper.toSongResponse(song);
+        // MapStruct maps id as String – cast safely
+        songResponse.setId(String.valueOf(song.getId()));
+
+        Auth auth = song.getAuth();
+        long totalPlays = songRepository.findByAuthId(auth.getId()).stream()
+                .mapToLong(s -> s.getPlayCount())
+                .sum();
+
+        ArtistResponse artistResponse = new ArtistResponse(
+                auth.getId(),
+                auth.getUsername(),
+                auth.getUrlAvatar(),
+                totalPlays
+        );
+
+        return new SongWithArtistResponse(songResponse, artistResponse);
     }
 
     // ========== ADMIN METHODS - NO FILTER ==========
