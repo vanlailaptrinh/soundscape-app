@@ -13,6 +13,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # File sql sẽ tự động chạy để nạp dữ liệu khi DB khởi tạo lần đầu
+      - ./backup_tmdt.sql:/docker-entrypoint-initdb.d/backup_tmdt.sql
     networks:
       - soundscape-network
     restart: unless-stopped
