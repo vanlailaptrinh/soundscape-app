@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: soundscape_db
+    environment:
+      POSTGRES_DB: tmdt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup_tmdt.sql:/docker-entrypoint-initdb.d/backup_tmdt.sql:ro
+    networks:
+      - soundscape-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: soundscape_redis
+    networks:
+      - soundscape-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vantrandevops/soundscape-app:latest
+    container_name: soundscape_backend
+    env_file:
+      - .env
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/tmdt
+      REDIS_HOST: redis
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - soundscape-network
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: soundscape_cloudflared
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - backend
+    networks:
+      - soundscape-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  soundscape-network:
+    driver: bridge
