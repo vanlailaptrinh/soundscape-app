@@ -43,7 +43,8 @@ public class FollowService {
         switch (followRequest.getType()) {
             case ARTIST -> {
                 var artist = artService.getArtistById(id);
-                if (artist == null) throw new IllegalArgumentException("Artist không tồn tại");
+                if (artist == null)
+                    throw new IllegalArgumentException("Artist không tồn tại");
 
                 boolean alreadyFollowed = user.getFollowingArtists()
                         .stream()
@@ -53,11 +54,12 @@ public class FollowService {
                     return ("Đã follow nghệ sĩ này rồi");
 
                 user.getFollowingArtists().add(artist);
-                message = "Follow nghệ sĩ thành công";
+                message = "Follow nghệ sĩ thành cônggggggggggggggg";
             }
             case ALBUM -> {
                 var album = albumService.getAlbumById(id);
-                if (album == null) throw new IllegalArgumentException("Album không tồn tại");
+                if (album == null)
+                    throw new IllegalArgumentException("Album không tồn tại");
 
                 boolean alreadyFollowed = user.getFollowingAlbums()
                         .stream()
