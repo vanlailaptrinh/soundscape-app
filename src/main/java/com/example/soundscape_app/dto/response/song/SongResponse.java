@@ -1,6 +1,7 @@
 package com.example.soundscape_app.dto.response.song;
 
 import com.example.soundscape_app.enums.GenreEnum;
+import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,7 @@ public class SongResponse {
     private List<GenreEnum> genres;
     private Long duration;
     private String description;
+    private Long artistId;
+    private String artistName;
+    private List<ArtistResponse> collaborators;
 }

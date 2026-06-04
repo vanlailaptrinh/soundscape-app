@@ -3,6 +3,7 @@ package com.example.soundscape_app.dto.response.song;
 import com.example.soundscape_app.enums.GenreEnum;
 import com.example.soundscape_app.enums.MediaEnum;
 import com.example.soundscape_app.enums.SongStatusEnum;
+import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,4 +32,5 @@ public class SongDetailResponse {
     // Thông tin Auth (chỉ lấy tên)
     private Long authId;
     private String authUsername;
+    private List<ArtistResponse> collaborators;
 }

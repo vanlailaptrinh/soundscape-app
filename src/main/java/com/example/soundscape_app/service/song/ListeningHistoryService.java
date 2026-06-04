@@ -2,6 +2,9 @@ package com.example.soundscape_app.service.song;
 
 import com.example.soundscape_app.dto.response.song.DailyListeningTime;
 import com.example.soundscape_app.dto.hepler.MonthlyPlayCount;
+import com.example.soundscape_app.dto.response.song.AppListeningChartPoint;
+import com.example.soundscape_app.dto.response.song.TopSongStat;
+import com.example.soundscape_app.dto.response.song.AppListeningStatsResponse;
 import com.example.soundscape_app.entity.auth.Auth;
 import com.example.soundscape_app.entity.song.ListeningHistory;
 import com.example.soundscape_app.entity.song.Song;
@@ -94,6 +97,12 @@ public class ListeningHistoryService {
 
     public List<DailyListeningTime> getUserDailyListeningTime(Auth auth, int days) {
         return listeningHistoryRepository.getUserDailyListeningTime(auth.getId(), days);
+    }
+
+    public AppListeningStatsResponse getAppListeningStats(int days) {
+        List<AppListeningChartPoint> chart = listeningHistoryRepository.getAppDailyListeningStats(days);
+        List<TopSongStat> topSongs = listeningHistoryRepository.getTopSongsApp(days);
+        return new AppListeningStatsResponse(chart, topSongs);
     }
 
 }

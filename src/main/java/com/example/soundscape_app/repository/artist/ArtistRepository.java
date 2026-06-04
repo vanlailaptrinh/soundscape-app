@@ -73,5 +73,7 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
             nativeQuery = true)
     List<ArtistResponse> findByNormalizedSearch(@Param("keyword") String keyword);
 
+    @Query("SELECT a FROM Auth a JOIN a.roleEntities r WHERE r.name = com.example.soundscape_app.enums.RoleEnum.ARTIST")
+    List<Auth> findAllArtists();
 
 }

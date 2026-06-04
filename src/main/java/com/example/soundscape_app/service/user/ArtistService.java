@@ -124,4 +124,10 @@ public class ArtistService {
         AlbumResponse albumResponse = albumMapper.toResponse(album);
         return new AlbumWithSongsResponse(albumResponse, songs, artistResponse);
     }
+
+    public List<ArtistResponse> getAllArtists() {
+        return artistRepository.findAllArtists().stream()
+                .map(userMapper::toArtistResponse)
+                .toList();
+    }
 }

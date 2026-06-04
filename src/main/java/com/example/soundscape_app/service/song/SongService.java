@@ -16,6 +16,7 @@ import com.example.soundscape_app.entity.song.Song;
 import com.example.soundscape_app.enums.SongStatusEnum;
 import com.example.soundscape_app.mapper.song.SongMapper;
 import com.example.soundscape_app.repository.song.SongRepository;
+import com.example.soundscape_app.repository.auth.AuthRepository;
 import com.example.soundscape_app.service.auth.AuthService;
 import com.example.soundscape_app.service.common.AlbumValid;
 import com.example.soundscape_app.util.FileUtil;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 public class SongService {
     private final S3Util s3Util;
     private final SongRepository songRepository;
+    private final AuthRepository authRepository;
     private final GenreService genreService;
     private final SongMapper songMapper;
     private final ListeningHistoryService listeningHistoryService;
@@ -89,6 +91,14 @@ public class SongService {
 
         if (album != null) {
             addAlbumItemToSongAndAlbum(song, album);
+        }
+
+        if (songRequest.getCollaboratorIds() != null && !songRequest.getCollaboratorIds().isEmpty()) {
+            List<Auth> collabs = authRepository.findAllById(songRequest.getCollaboratorIds());
+            List<Auth> activeCollabs = collabs.stream()
+                    .filter(c -> !c.getId().equals(auth.getId()))
+                    .toList();
+            song.setCollaborators(new HashSet<>(activeCollabs));
         }
 
         return songRepository.save(song);
@@ -251,7 +261,7 @@ public class SongService {
     }
 
     public List<SongResponse> getSongsByArtistId(Long artistId) {
-        List<Song> songs = songRepository.findByAuthId(artistId);
+        List<Song> songs = songRepository.findByAuthIdOrCollaboratorId(artistId);
 
         // Filter out banned songs
         return songs.stream()
@@ -359,7 +369,7 @@ public class SongService {
 
     public List<SongResponse> getMySongs(String authorizationHeader) {
         Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
-        List<Song> songs = songRepository.findByAuthId(auth.getId());
+        List<Song> songs = songRepository.findByAuthIdOrCollaboratorId(auth.getId());
 
         // Filter out banned songs
         return songs.stream()
@@ -369,7 +379,7 @@ public class SongService {
     }
 
     public Long getTotalSongsByUser(Long userId) {
-        List<Song> allSongs = songRepository.findByAuthId(userId);
+        List<Song> allSongs = songRepository.findByAuthIdOrCollaboratorId(userId);
 
         // Count only active songs
         return allSongs.stream()
@@ -399,7 +409,7 @@ public class SongService {
         songResponse.setId(String.valueOf(song.getId()));
 
         Auth auth = song.getAuth();
-        long totalPlays = songRepository.findByAuthId(auth.getId()).stream()
+        long totalPlays = songRepository.findByAuthIdOrCollaboratorId(auth.getId()).stream()
                 .mapToLong(s -> s.getPlayCount())
                 .sum();
 
