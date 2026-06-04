@@ -58,6 +58,14 @@ public class Song {
     )
     private Set<Genre> genres = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "song_collaborators",
+            joinColumns = @JoinColumn(name = "song_id"),
+            inverseJoinColumns = @JoinColumn(name = "auth_id")
+    )
+    private Set<Auth> collaborators = new HashSet<>();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private MediaEnum type;

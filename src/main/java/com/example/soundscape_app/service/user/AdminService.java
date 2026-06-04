@@ -1,6 +1,7 @@
 package com.example.soundscape_app.service.user;
 
 import com.example.soundscape_app.dto.response.song.ListSongResponse;
+import com.example.soundscape_app.dto.response.song.AppListeningStatsResponse;
 import com.example.soundscape_app.dto.response.user.ListUserResponse;
 import com.example.soundscape_app.dto.response.user.UserDetailResponse;
 import com.example.soundscape_app.entity.auth.Auth;
@@ -133,6 +134,9 @@ public class AdminService {
         return songService.getAllSongs(sortedPageable);
     }
 
+    public AppListeningStatsResponse getAppListeningStats(int days) {
+        return listeningHistoryService.getAppListeningStats(days);
+    }
 
 }
 

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface SongMapper {
     @Named("mapGenres")
     default List<GenreEnum> mapGenres(Set<Genre> genres) {
@@ -24,12 +24,14 @@ public interface SongMapper {
             return Collections.emptyList();
         }
         return genres.stream()
-                .map(Genre::getName)
-                .sorted()
-                .collect(Collectors.toList());
+            .map(Genre::getName)
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     @Mapping(target = "genres", source = "genres", qualifiedByName = "mapGenres")
+    @Mapping(target = "artistId", source = "auth.id")
+    @Mapping(target = "artistName", source = "auth.username")
     SongResponse toSongResponse(Song song);
 
     @Mapping(target = "artistEmail", source = "auth.email")

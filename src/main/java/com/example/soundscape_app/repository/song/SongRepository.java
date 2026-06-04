@@ -112,8 +112,11 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             """, nativeQuery = true)
     List<SongTrendingResponse> findByNormalizedSearch(@Param("keyword") String keyword);
 
-    @Query("SELECT COUNT(s) FROM Song s WHERE s.auth.id = :userId AND s.status <> 'BANNED'")
+    @Query("SELECT COUNT(DISTINCT s) FROM Song s LEFT JOIN s.collaborators c WHERE (s.auth.id = :userId OR c.id = :userId) AND s.status <> 'BANNED'")
     long countSongsByUser(Long userId);
+
+    @Query("SELECT DISTINCT s FROM Song s LEFT JOIN s.collaborators c WHERE s.auth.id = :authId OR c.id = :authId")
+    List<Song> findByAuthIdOrCollaboratorId(@Param("authId") Long authId);
 
     @Query(value = """
             SELECT s.id,

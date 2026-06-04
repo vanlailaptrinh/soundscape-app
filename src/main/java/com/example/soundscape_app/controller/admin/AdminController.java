@@ -3,6 +3,7 @@ package com.example.soundscape_app.controller.admin;
 import com.example.soundscape_app.dto.request.auth.RoleRequest;
 import com.example.soundscape_app.dto.response.song.ListSongResponse;
 import com.example.soundscape_app.dto.response.song.SongDetailResponse;
+import com.example.soundscape_app.dto.response.song.AppListeningStatsResponse;
 import com.example.soundscape_app.dto.response.user.ListUserResponse;
 import com.example.soundscape_app.dto.response.user.UserDetailResponse;
 import com.example.soundscape_app.service.song.SongService;
@@ -83,6 +84,13 @@ public class AdminController {
     @PutMapping("song/{songId}/unblock")
     public ResponseEntity<String> unblockSong(@PathVariable Long songId) {
         String result = songService.unblockSong(songId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/statistics/analyse")
+    public ResponseEntity<AppListeningStatsResponse> getAppListeningStats(
+            @RequestParam(value = "days", defaultValue = "30") int days) {
+        AppListeningStatsResponse result = adminService.getAppListeningStats(days);
         return ResponseEntity.ok(result);
     }
 

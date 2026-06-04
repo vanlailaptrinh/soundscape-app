@@ -23,6 +23,8 @@ public class SongRequest {
 
     private List<Long> genreIds;
 
+    private List<Long> collaboratorIds;
+
     public List<Long> getGenreIds() {
         return (genreIds == null || genreIds.isEmpty())
                 ? List.of(1L)
