@@ -1,7 +1,7 @@
 package com.example.soundscape_app.mapper.song;
 
 
-import com.example.soundscape_app.controller.song.ListSongResponse;
+import com.example.soundscape_app.dto.response.song.ListSongResponse;
 import com.example.soundscape_app.dto.response.song.SongDetailResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
 import com.example.soundscape_app.entity.song.Genre;

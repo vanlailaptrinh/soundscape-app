@@ -20,7 +20,7 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
                 a.id AS id,
                 a.username AS username,
                 a.url_avatar AS urlAvatar,
-                CAST(0 AS SIGNED) AS monthlyListeners
+                CAST(0 AS BIGINT) AS monthlyListeners
             FROM auths a
             JOIN songs s ON s.auth_id = a.id
             LEFT JOIN listening_history lh ON lh.song_id = s.id
@@ -28,7 +28,7 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
             ORDER BY
                 SUM(
                     (lh.duration_listened / 60.0) *
-                    EXP(-TIMESTAMPDIFF(SECOND, lh.listened_at, NOW()) / 86400.0 / :tau)
+                    EXP(-EXTRACT(EPOCH FROM (NOW() - lh.listened_at)) / 86400.0 / :tau)
                 ) ASC
             """,
             countQuery = """
@@ -42,14 +42,14 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
 
     @Query(value = """
             WITH normalized_search AS (
-                SELECT
-                    LOWER(:keyword) AS norm_keyword
+                SELECT 
+                    unaccent(lower(:keyword)) AS norm_keyword
             )
             SELECT
                 a.id AS id,
                 a.username AS username,
                 a.url_avatar AS urlAvatar,
-                CAST(0 AS SIGNED) AS monthlyListeners
+                CAST(0 AS BIGINT) AS monthlyListeners
             FROM auths a
             JOIN auth_roles ar ON a.id = ar.auth_id
             JOIN roles r ON ar.role_id = r.id
@@ -57,14 +57,16 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
             WHERE
                 r.name = 'ARTIST'
                 AND (
-                    LOWER(a.username) LIKE CONCAT('%', ns.norm_keyword, '%')
+                    similarity(unaccent(lower(a.username)), ns.norm_keyword) > 0
+                    OR unaccent(lower(a.username)) LIKE '%' || ns.norm_keyword || '%'
                 )
             ORDER BY
                 CASE
-                    WHEN LOWER(a.username) = ns.norm_keyword THEN 1
-                    WHEN LOWER(a.username) LIKE CONCAT(ns.norm_keyword, '%') THEN 2
+                    WHEN unaccent(lower(a.username)) = ns.norm_keyword THEN 1
+                    WHEN unaccent(lower(a.username)) LIKE ns.norm_keyword || '%' THEN 2
                     ELSE 3
                 END,
+                similarity(unaccent(lower(a.username)), ns.norm_keyword) DESC,
                 a.created_at DESC
             LIMIT 10
             """,

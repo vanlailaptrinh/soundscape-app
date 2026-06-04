@@ -1,7 +1,8 @@
 package com.example.soundscape_app.service.song;
 
-import com.example.soundscape_app.controller.song.ListSongResponse;
 import com.example.soundscape_app.dto.request.song.SongRequest;
+import com.example.soundscape_app.dto.response.song.ListSongResponse;
+import com.example.soundscape_app.dto.response.song.DailyListeningTime;
 import com.example.soundscape_app.dto.response.song.ListeningHistoryResponse;
 import com.example.soundscape_app.dto.response.song.SongDetailResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
@@ -230,9 +231,16 @@ public class SongService {
     }
 
     public Song getSongById(Long songId) {
-        if (isBannedSong(songId))
+        if (songId == null) {
             return null;
-        return songRepository.findById(songId).orElse(null);
+        }
+
+        Song song = songRepository.findById(songId).orElse(null);
+        if (song == null || song.getStatus() == SongStatusEnum.BANNED) {
+            return null;
+        }
+
+        return song;
     }
 
     public SongResponse getSongResponseById(Long songId) {
@@ -265,6 +273,11 @@ public class SongService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(activeHistory, pageable, activeHistory.size());
+    }
+
+    public List<DailyListeningTime> getUserDailyListeningTime(String authorizationHeader, int days) {
+        Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
+        return listeningHistoryService.getUserDailyListeningTime(auth, days);
     }
 
     public Page<SongTrendingResponse> getListSongsRecommend(String authorizationHeader, Pageable pageable) {
@@ -364,12 +377,21 @@ public class SongService {
                 .count();
     }
 
-    public SongWithArtistResponse getSongWithArtist(Long songId) {
+    public SongWithArtistResponse getSongWithArtist(String authorizationHeader, Long songId) {
         Song song = songRepository.findById(songId)
                 .orElseThrow(() -> new RuntimeException("Song not found: " + songId));
 
         if (song.getStatus() == SongStatusEnum.BANNED) {
             throw new RuntimeException("Song is not available");
+        }
+
+        // Record listening history if user is logged in
+        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+            try {
+                this.listenSong(authorizationHeader, songId);
+            } catch (Exception e) {
+                // Log or ignore to prevent blocking song play
+            }
         }
 
         SongResponse songResponse = songMapper.toSongResponse(song);

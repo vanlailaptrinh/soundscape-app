@@ -1,5 +1,6 @@
 package com.example.soundscape_app.service.song;
 
+import com.example.soundscape_app.dto.response.song.DailyListeningTime;
 import com.example.soundscape_app.dto.hepler.MonthlyPlayCount;
 import com.example.soundscape_app.entity.auth.Auth;
 import com.example.soundscape_app.entity.song.ListeningHistory;
@@ -91,5 +92,8 @@ public class ListeningHistoryService {
         return counts.stream().mapToLong(Long::longValue).sum();
     }
 
+    public List<DailyListeningTime> getUserDailyListeningTime(Auth auth, int days) {
+        return listeningHistoryRepository.getUserDailyListeningTime(auth.getId(), days);
+    }
 
 }

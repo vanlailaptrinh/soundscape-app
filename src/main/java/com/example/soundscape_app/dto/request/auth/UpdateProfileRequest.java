@@ -1,18 +1,17 @@
-package com.example.soundscape_app.dto.response.user;
+package com.example.soundscape_app.dto.request.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private Long id;
+public class UpdateProfileRequest {
     private String username;
-    private String email;
-    private String urlAvatar;
     private String description;
+    private MultipartFile avatar;
 }

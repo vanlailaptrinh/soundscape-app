@@ -1,6 +1,7 @@
 package com.example.soundscape_app.controller.song;
 
 import com.example.soundscape_app.dto.request.song.SongRequest;
+import com.example.soundscape_app.dto.response.song.DailyListeningTime;
 import com.example.soundscape_app.dto.response.song.ListeningHistoryResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
 import com.example.soundscape_app.dto.response.song.SongTrendingResponse;
@@ -39,8 +40,10 @@ public class SongController {
     }
 
     @GetMapping("/open/songs/{songId}")
-    public ResponseEntity<SongWithArtistResponse> getSongWithArtist(@PathVariable Long songId) {
-        return ResponseEntity.ok(songService.getSongWithArtist(songId));
+    public ResponseEntity<SongWithArtistResponse> getSongWithArtist(
+            @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
+            @PathVariable Long songId) {
+        return ResponseEntity.ok(songService.getSongWithArtist(authorizationHeader, songId));
     }
 
 
@@ -61,6 +64,14 @@ public class SongController {
 
         Page<ListeningHistoryResponse> history = songService.getUniqueListeningHistory(authorizationHeader, pageable);
         return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/user/daily-time")
+    public ResponseEntity<List<DailyListeningTime>> getUserDailyListeningTime(
+            @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
+            @RequestParam(name = "days", defaultValue = "30") int days) {
+        List<DailyListeningTime> dailyTime = songService.getUserDailyListeningTime(authorizationHeader, days);
+        return ResponseEntity.ok(dailyTime);
     }
 
     @PutMapping("user/songs/{songId}/cal-duration-song")

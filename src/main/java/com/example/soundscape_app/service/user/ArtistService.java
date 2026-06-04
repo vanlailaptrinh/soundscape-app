@@ -19,7 +19,9 @@ import com.example.soundscape_app.service.song.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +45,7 @@ public class ArtistService {
 
     public ArtistWithSongsAndAlbumsResponse getArtistWithSongsAndAlbums(Long artistId) {
         Auth artist = artistRepository.findById(artistId)
-                .orElseThrow(() -> new RuntimeException("Artist not found for id: " + artistId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found for id: " + artistId));
 
         // getSongsByArtistId đã filter banned songs rồi
         List<SongResponse> songs = songService.getSongsByArtistId(artistId);
@@ -96,7 +98,7 @@ public class ArtistService {
 
     public Auth getArtistById(Long artistId) {
         return artistRepository.findById(artistId)
-                .orElseThrow(() -> new RuntimeException("Artist not found for id: " + artistId));
+                .orElse(null);
     }
 
     public List<ArtistResponse> getFollowedArtists(String authorizationHeader) {

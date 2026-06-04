@@ -38,6 +38,9 @@ public class Auth {
     @Column(unique = true)
     private String urlAvatar;
 
+    @Column(length = 500)
+    private String description;
+
     @JsonIgnore
     @OneToMany(mappedBy = "auth", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();

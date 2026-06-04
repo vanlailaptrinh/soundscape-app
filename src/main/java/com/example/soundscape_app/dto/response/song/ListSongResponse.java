@@ -1,4 +1,4 @@
-package com.example.soundscape_app.controller.song;
+package com.example.soundscape_app.dto.response.song;
 
 import com.example.soundscape_app.enums.SongStatusEnum;
 import lombok.AllArgsConstructor;

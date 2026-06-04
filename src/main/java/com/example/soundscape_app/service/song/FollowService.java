@@ -12,6 +12,7 @@ import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import com.example.soundscape_app.dto.response.user.FollowedResponse;
 import com.example.soundscape_app.entity.album.Album;
 import com.example.soundscape_app.entity.auth.Auth;
+import com.example.soundscape_app.exception.InvalidTokenException;
 import com.example.soundscape_app.repository.user.UserRepository;
 import com.example.soundscape_app.service.album.AlbumService;
 import com.example.soundscape_app.service.auth.AuthService;
@@ -33,6 +34,10 @@ public class FollowService {
 
     public String follow(String authorizationHeader, FollowRequest followRequest) {
         Auth user = authService.getAuthFromAccessToken(authorizationHeader);
+        if (user == null) {
+            throw new InvalidTokenException("Invalid token");
+        }
+
         String message;
         Long id = followRequest.getId();
         switch (followRequest.getType()) {
@@ -73,6 +78,10 @@ public class FollowService {
 
     public String unfollow(String authorizationHeader, UnFollowRequest unFollowRequest) {
         Auth user = authService.getAuthFromAccessToken(authorizationHeader);
+        if (user == null) {
+            throw new InvalidTokenException("Invalid token");
+        }
+
         String message;
         Long id = unFollowRequest.getId();
         switch (unFollowRequest.getType()) {

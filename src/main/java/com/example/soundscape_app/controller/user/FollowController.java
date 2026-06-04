@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import com.example.soundscape_app.dto.response.user.FollowedResponse;
 import com.example.soundscape_app.service.song.FollowService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -31,14 +32,14 @@ public class FollowController {
     @PostMapping("user/follow")
     public ResponseEntity<String> follow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestBody FollowRequest request) {
+            @Valid @RequestBody FollowRequest request) {
         return ResponseEntity.ok(followService.follow(authorizationHeader, request));
     }
 
     @PostMapping("user/unfollow")
     public ResponseEntity<String> unfollow(
             @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestBody UnFollowRequest request) {
+            @Valid @RequestBody UnFollowRequest request) {
         return ResponseEntity.ok(followService.unfollow(authorizationHeader, request));
     }
 

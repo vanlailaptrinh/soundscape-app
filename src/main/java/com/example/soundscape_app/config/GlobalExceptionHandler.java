@@ -2,6 +2,7 @@ package com.example.soundscape_app.config;
 
 import com.example.soundscape_app.dto.response.global.GlobalErrorResponse;
 import com.example.soundscape_app.exception.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -82,6 +83,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             IllegalArgumentException.class,
+            IllegalStateException.class,
+            EntityNotFoundException.class,
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class

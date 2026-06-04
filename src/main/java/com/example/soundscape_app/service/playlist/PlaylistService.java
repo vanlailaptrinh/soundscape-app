@@ -15,6 +15,7 @@ import com.example.soundscape_app.entity.playlist.Playlist;
 import com.example.soundscape_app.entity.playlist.PlaylistItem;
 import com.example.soundscape_app.entity.song.Song;
 import com.example.soundscape_app.enums.SongStatusEnum;
+import com.example.soundscape_app.exception.InvalidTokenException;
 import com.example.soundscape_app.mapper.song.PlaylistMapper;
 import com.example.soundscape_app.mapper.song.SongMapper;
 import com.example.soundscape_app.mapper.song.UserMapper;
@@ -125,13 +126,13 @@ public class PlaylistService {
     public PlaylistResponse createPlayListWithFirstSong(String authorizationHeader, Long songId) {
         Auth user = authService.getAuthFromAccessToken(authorizationHeader);
         if (user == null) {
-            throw new RuntimeException("Invalid token");
+            throw new InvalidTokenException("Invalid token");
         }
 
         // getSongById đã filter banned songs rồi
         Song song = songService.getSongById(songId);
         if (song == null) {
-            throw new RuntimeException("Song not found or has been banned");
+            throw new IllegalArgumentException("Song not found or has been banned");
         }
 
         Playlist playlist = new Playlist();
