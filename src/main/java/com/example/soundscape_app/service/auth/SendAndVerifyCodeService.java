@@ -28,7 +28,7 @@ public class SendAndVerifyCodeService {
     private final AuthRepository appUserRepository;
     private final EmailService emailService;
 
-    @Value("${app.web.base-url:http://localhost:8081}")
+    @Value("${app.web.base-url:http://localhost:5173}")
     private String webBaseUrl;
 
     @Value("${app.email.verification-token-ttl:PT24H}")
