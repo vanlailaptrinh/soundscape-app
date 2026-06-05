@@ -66,14 +66,6 @@ public class SongController {
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/user/daily-time")
-    public ResponseEntity<List<DailyListeningTime>> getUserDailyListeningTime(
-            @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @RequestParam(name = "days", defaultValue = "30") int days) {
-        List<DailyListeningTime> dailyTime = songService.getUserDailyListeningTime(authorizationHeader, days);
-        return ResponseEntity.ok(dailyTime);
-    }
-
     @PutMapping("user/songs/{songId}/cal-duration-song")
     @Transactional
     public void calDurationSong(
