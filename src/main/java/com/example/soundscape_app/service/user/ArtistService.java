@@ -73,7 +73,8 @@ public class ArtistService {
     }
 
     public Page<ArtistResponse> getTrendingArtists(Pageable pageable, double tau) {
-        return artistRepository.findTrendingArtists(pageable, tau);
+        return artistRepository.findTrendingArtists(pageable, tau)
+                .map(p -> new ArtistResponse(p.getId(), p.getUsername(), p.getUrlAvatar(), p.getMonthlyListeners()));
     }
 
     public SongAndArtistResponse getSongAndArtistById(Long songId) {

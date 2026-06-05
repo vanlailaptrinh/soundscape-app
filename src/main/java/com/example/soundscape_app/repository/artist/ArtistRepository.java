@@ -3,6 +3,7 @@ package com.example.soundscape_app.repository.artist;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.soundscape_app.dto.response.user.ArtistProjection;
 import com.example.soundscape_app.dto.response.user.ArtistResponse;
 import com.example.soundscape_app.entity.auth.Auth;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,7 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
                     JOIN songs s ON s.auth_id = a.id
                     """,
             nativeQuery = true)
-    Page<ArtistResponse> findTrendingArtists(Pageable pageable, @Param("tau") double tau);
+    Page<ArtistProjection> findTrendingArtists(Pageable pageable, @Param("tau") double tau);
 
 
     @Query(value = """
@@ -71,7 +72,7 @@ public interface ArtistRepository extends JpaRepository<Auth, Long> {
             LIMIT 10
             """,
             nativeQuery = true)
-    List<ArtistResponse> findByNormalizedSearch(@Param("keyword") String keyword);
+    List<ArtistProjection> findByNormalizedSearch(@Param("keyword") String keyword);
 
     @Query("SELECT a FROM Auth a JOIN a.roleEntities r WHERE r.name = com.example.soundscape_app.enums.RoleEnum.ARTIST")
     List<Auth> findAllArtists();
