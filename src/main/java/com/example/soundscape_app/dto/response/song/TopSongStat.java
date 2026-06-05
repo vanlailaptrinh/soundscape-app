@@ -1,8 +1,13 @@
 package com.example.soundscape_app.dto.response.song;
 
-public interface TopSongStat {
-    Long getSongId();
-    String getTitle();
-    String getArtist();
-    Long getListeningCount();
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class TopSongStat {
+    private Long songId;
+    private String title;
+    private String artist;
+    private Long listeningCount;
 }

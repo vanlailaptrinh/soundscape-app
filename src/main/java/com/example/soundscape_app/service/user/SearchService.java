@@ -3,6 +3,7 @@ package com.example.soundscape_app.service.user;
 import java.util.List;
 import java.util.Map;
 
+import com.example.soundscape_app.dto.response.user.ArtistProjection;
 import org.springframework.stereotype.Service;
 
 import com.example.soundscape_app.dto.response.album.AlbumTrendingResponse;
@@ -24,7 +25,10 @@ public class SearchService {
     public Map<String, Object> searchAll(String keyword) {
         List<SongTrendingResponse> songs = songRepository.findByNormalizedSearch(keyword);
         List<AlbumTrendingResponse> albums = albumRepository.findByNormalizedSearch(keyword);
-        List<ArtistResponse> users = artistRepository.findByNormalizedSearch(keyword);
+        List<ArtistProjection> projections = artistRepository.findByNormalizedSearch(keyword);
+        List<ArtistResponse> users = projections.stream()
+                .map(p -> new ArtistResponse(p.getId(), p.getUsername(), p.getUrlAvatar(), p.getMonthlyListeners()))
+                .toList();
 
         return Map.of(
                 "songs", songs,
