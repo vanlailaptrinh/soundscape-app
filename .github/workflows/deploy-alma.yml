@@ -27,7 +27,7 @@ jobs:
 
       - name: Build backend Docker image
         run: |
-          docker build -t vantrandevops/soundscape-app:latest_final .
+          docker build -t vantrandevops/soundscape-app:latest_final_2 .
 
       - name: Recreate backend container only
         run: |

@@ -5,6 +5,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.mapstruct.Named;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -13,6 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -32,6 +34,9 @@ public class S3Util {
 
     @Value("${aws.s3.asset.video}")
     private String videoFolder;
+
+    @Value("${app.cdn.base-url:}")
+    private String cdnBaseUrl;
 
     public S3Util(S3Client s3Client) {
         this.s3Client = s3Client;
@@ -93,6 +98,7 @@ public class S3Util {
         }
     }
 
+    @Named("uploadImageFromUrl")
     public String uploadImageFromUrl(String imageUrl) {
         String fileName = "avatar_" + System.currentTimeMillis() + ".jpg";
         String key = imageFolder + fileName;
@@ -129,6 +135,39 @@ public class S3Util {
         } catch (Exception e) {
             throw new RuntimeException("Error uploading image from URL: " + e.getMessage(), e);
         }
+    }
+
+    @Named("toCdnUrl")
+    public String toCdnUrl(String url) {
+        if (url == null || url.isBlank() || cdnBaseUrl == null || cdnBaseUrl.isBlank()) {
+            return url;
+        }
+
+        try {
+            URI uri = URI.create(url);
+            String host = uri.getHost();
+            if (!isOwnS3Host(host)) {
+                return url;
+            }
+
+            String cdnBase = cdnBaseUrl.endsWith("/")
+                    ? cdnBaseUrl.substring(0, cdnBaseUrl.length() - 1)
+                    : cdnBaseUrl;
+            String query = uri.getRawQuery() != null ? "?" + uri.getRawQuery() : "";
+            return cdnBase + uri.getRawPath() + query;
+        } catch (IllegalArgumentException e) {
+            return url;
+        }
+    }
+
+    private boolean isOwnS3Host(String host) {
+        if (host == null || bucketName == null || bucketName.isBlank()) {
+            return false;
+        }
+
+        String globalS3Host = bucketName + ".s3.amazonaws.com";
+        return host.equals(globalS3Host)
+                || (host.startsWith(bucketName + ".s3.") && host.endsWith(".amazonaws.com"));
     }
 
     public String uploadFile(MultipartFile file) {

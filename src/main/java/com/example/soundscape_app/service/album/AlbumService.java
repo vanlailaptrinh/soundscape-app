@@ -2,6 +2,7 @@ package com.example.soundscape_app.service.album;
 
 import com.example.soundscape_app.dto.request.song.AlbumRequest;
 import com.example.soundscape_app.dto.response.album.AlbumResponse;
+import com.example.soundscape_app.dto.response.album.AlbumTrendingCdnResponse;
 import com.example.soundscape_app.dto.response.album.AlbumTrendingResponse;
 import com.example.soundscape_app.dto.response.song.SongResponse;
 import com.example.soundscape_app.entity.album.Album;
@@ -96,6 +97,7 @@ public class AlbumService {
                                     && item.getSong().getStatus() == SongStatusEnum.ACTIVE);
                     return hasActiveSongs;
                 })
+                .map(this::toCdnAlbumTrendingResponse)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(activeAlbums, pageable, activeAlbums.size());
@@ -167,5 +169,15 @@ public class AlbumService {
         albumRepository.delete(album);
 
         return "Deleted album " + albumName + " successfully";
+    }
+
+    private AlbumTrendingResponse toCdnAlbumTrendingResponse(AlbumTrendingResponse album) {
+        return new AlbumTrendingCdnResponse(
+                album.getId(),
+                s3Util.toCdnUrl(album.getCoverUrl()),
+                album.getName(),
+                album.getArtistId(),
+                album.getUsername()
+        );
     }
 }
