@@ -1,5 +1,6 @@
 package com.example.soundscape_app.service.user;
 
+import com.example.soundscape_app.dto.request.song.FeedbackRequest;
 import com.example.soundscape_app.entity.auth.Auth;
 import com.example.soundscape_app.entity.song.Feedback;
 import com.example.soundscape_app.entity.song.ListeningHistory;
