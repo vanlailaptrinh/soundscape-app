@@ -87,11 +87,5 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/statistics/analyse")
-    public ResponseEntity<AppListeningStatsResponse> getAppListeningStats(
-            @RequestParam(value = "days", defaultValue = "30") int days) {
-        AppListeningStatsResponse result = adminService.getAppListeningStats(days);
-        return ResponseEntity.ok(result);
-    }
 
 }
