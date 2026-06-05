@@ -39,14 +39,6 @@ public class SongController {
         return songService.getRecentSongs(pageable);
     }
 
-    @GetMapping("/open/songs/{songId}")
-    public ResponseEntity<SongWithArtistResponse> getSongWithArtist(
-            @RequestHeader(name = "Authorization", required = false) String authorizationHeader,
-            @PathVariable Long songId) {
-        return ResponseEntity.ok(songService.getSongWithArtist(authorizationHeader, songId));
-    }
-
-
     //-------------------- User ---------------------//
     @GetMapping("/user/songs/{songId}/listen")
     @Transactional

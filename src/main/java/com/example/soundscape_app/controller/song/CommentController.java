@@ -1,4 +1,4 @@
-package com.example.soundscape_app.dto.request.song;
+package com.example.soundscape_app.controller.song;
 
 import com.example.soundscape_app.dto.response.song.CommentAndUserResponse;
 import com.example.soundscape_app.entity.song.Comment;

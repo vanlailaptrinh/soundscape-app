@@ -1,4 +1,5 @@
 package com.example.soundscape_app.controller.album;
+
 import com.example.soundscape_app.dto.request.song.AlbumRequest;
 import com.example.soundscape_app.dto.response.album.AlbumResponse;
 import com.example.soundscape_app.dto.response.album.AlbumTrendingResponse;

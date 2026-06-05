@@ -136,13 +136,15 @@ public class AlbumService {
         Auth auth = authService.getAuthFromAccessToken(authorizationHeader);
         List<Album> albums = albumRepository.findByAuthId(auth.getId());
 
-        // Filter albums: chỉ hiển thị albums có ít nhất 1 bài hát ACTIVE
+        // Filter albums: hiển thị albums trống (chưa có bài hát) hoặc có ít nhất 1 bài hát ACTIVE
         return albums.stream()
                 .filter(album -> {
-                    boolean hasActiveSongs = album.getAlbumItems().stream()
+                    if (album.getAlbumItems() == null || album.getAlbumItems().isEmpty()) {
+                        return true; // Album trống vẫn hiển thị
+                    }
+                    return album.getAlbumItems().stream()
                             .anyMatch(item -> item.getSong() != null
                                     && item.getSong().getStatus() == SongStatusEnum.ACTIVE);
-                    return hasActiveSongs;
                 })
                 .map(albumMapper::toResponse)
                 .collect(Collectors.toList());
