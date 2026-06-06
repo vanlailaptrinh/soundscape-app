@@ -53,7 +53,7 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         long totalSongs = songService.getTotalSongsByUser(userId);
-        long totalListening = listeningHistoryService.getTotalPlayCountByUser(userId);
+        long totalListening = songService.getTotalPlayCountByUser(userId);
         Long averageMonthlyListeners = listeningHistoryService.calculateAverageMonthlyListeners(userId);
 
         return userMapper.toUserDetailResponse(
