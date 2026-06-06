@@ -387,6 +387,10 @@ public class SongService {
                 .count();
     }
 
+    public Long getTotalPlayCountByUser(Long userId) {
+        return songRepository.sumPlayCountByUser(userId);
+    }
+
     public SongWithArtistResponse getSongWithArtist(String authorizationHeader, Long songId) {
         Song song = songRepository.findById(songId)
                 .orElseThrow(() -> new RuntimeException("Song not found: " + songId));

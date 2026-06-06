@@ -115,6 +115,18 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     @Query("SELECT COUNT(DISTINCT s) FROM Song s LEFT JOIN s.collaborators c WHERE (s.auth.id = :userId OR c.id = :userId) AND s.status <> 'BANNED'")
     long countSongsByUser(Long userId);
 
+    @Query(value = """
+            SELECT COALESCE(SUM(song_stats.play_count), 0)
+            FROM (
+                SELECT DISTINCT s.id, s.play_count
+                FROM songs s
+                LEFT JOIN song_collaborators sc ON sc.song_id = s.id
+                WHERE (s.auth_id = :userId OR sc.auth_id = :userId)
+                  AND s.status <> 'BANNED'
+            ) song_stats
+            """, nativeQuery = true)
+    long sumPlayCountByUser(@Param("userId") Long userId);
+
     @Query("SELECT DISTINCT s FROM Song s LEFT JOIN s.collaborators c WHERE s.auth.id = :authId OR c.id = :authId")
     List<Song> findByAuthIdOrCollaboratorId(@Param("authId") Long authId);
 
