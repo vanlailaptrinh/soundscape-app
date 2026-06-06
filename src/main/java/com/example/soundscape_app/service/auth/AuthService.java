@@ -216,6 +216,7 @@ public class AuthService {
         auth.setEmail(email);
         auth.setUsername(username);
         auth.setUrlAvatar(urlAvatar);
+        auth.setStatus(AccountStatusEnum.ACTIVE);
         auth.setRoleEntities(Set.of(roleRepository.findByName(RoleEnum.USER)
                 .orElseThrow(() -> new RuntimeException("Role not found"))));
 
