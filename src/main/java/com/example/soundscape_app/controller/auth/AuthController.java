@@ -56,7 +56,7 @@ public class AuthController {
     @PostMapping(value = "google-callback")
     public AuthResponse loginWithGoogle(@RequestBody LoginGoogleRequest request, HttpServletRequest
             httpRequest, HttpServletResponse httpResponse) {
-        return authService.loginOrRegisterWithGoogle(request.getCode(), httpRequest, httpResponse);
+        return authService.loginOrRegisterWithGoogle(request.getCode(), request.getRedirectUri(), httpRequest, httpResponse);
     }
 
 }

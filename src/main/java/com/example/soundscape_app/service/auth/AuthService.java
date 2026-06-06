@@ -233,10 +233,10 @@ public class AuthService {
         return authorizationHeader.substring(7);
     }
 
-    public AuthResponse loginOrRegisterWithGoogle(String code, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public AuthResponse loginOrRegisterWithGoogle(String code, String redirectUri, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         try {
             String decodedCode = URLDecoder.decode(code);
-            String idTokenString = exchangeCodeForIdToken(decodedCode);
+            String idTokenString = exchangeCodeForIdToken(decodedCode, redirectUri);
 
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(), JacksonFactory.getDefaultInstance())
@@ -288,13 +288,13 @@ public class AuthService {
     }
 
 
-    public String exchangeCodeForIdToken(String code) throws IOException {
+    public String exchangeCodeForIdToken(String code, String redirectUri) throws IOException {
         try {
             HttpContent content = new UrlEncodedContent(new GenericData() {{
                 put("code", code);
                 put("client_id", googleClientId);
                 put("client_secret", googleClientSecret);
-                put("redirect_uri", googleCallbackUrl);
+                put("redirect_uri", redirectUri != null && !redirectUri.isBlank() ? redirectUri : googleCallbackUrl);
                 put("grant_type", "authorization_code");
             }});
 

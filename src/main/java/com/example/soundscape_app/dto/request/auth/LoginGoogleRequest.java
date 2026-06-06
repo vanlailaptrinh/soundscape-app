@@ -9,4 +9,5 @@ import lombok.Data;
 @NoArgsConstructor
 public class LoginGoogleRequest {
     private String code;
+    private String redirectUri;
 }
