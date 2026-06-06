@@ -1,5 +1,6 @@
 package com.example.soundscape_app.controller.auth;
 
+import com.example.soundscape_app.dto.request.auth.LoginGoogleRequest;
 import com.example.soundscape_app.dto.request.auth.LoginRequest;
 import com.example.soundscape_app.dto.request.auth.RegisterRequest;
 import com.example.soundscape_app.dto.request.auth.VerificationRequest;
@@ -53,9 +54,9 @@ public class AuthController {
     }
 
     @PostMapping(value = "google-callback")
-    public AuthResponse loginWithGoogle(@RequestBody String code, HttpServletRequest
+    public AuthResponse loginWithGoogle(@RequestBody LoginGoogleRequest request, HttpServletRequest
             httpRequest, HttpServletResponse httpResponse) {
-        return authService.loginOrRegisterWithGoogle(code, httpRequest, httpResponse);
+        return authService.loginOrRegisterWithGoogle(request.getCode(), httpRequest, httpResponse);
     }
 
 }
