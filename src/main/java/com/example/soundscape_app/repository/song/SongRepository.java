@@ -146,4 +146,46 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             """, nativeQuery = true)
     Page<SongTrendingResponse> findRecentSongs(Pageable pageable);
 
+    @Query(value = """
+            SELECT s.*
+            FROM songs s
+            JOIN auths a ON s.auth_id = a.id
+            WHERE s.status <> 'BANNED'
+              AND (
+                  :genre IS NULL
+                  OR :genre = ''
+                  OR EXISTS (
+                      SELECT 1
+                      FROM song_genres sg
+                      JOIN genre g ON g.id = sg.genre_id
+                      WHERE sg.song_id = s.id
+                        AND g.name = :genre
+                  )
+              )
+              AND (
+                  :keyword IS NULL
+                  OR :keyword = ''
+                  OR similarity(unaccent(lower(s.title)), unaccent(lower(:keyword))) > 0
+                  OR similarity(unaccent(lower(COALESCE(s.author, ''))), unaccent(lower(:keyword))) > 0
+                  OR similarity(unaccent(lower(COALESCE(s.description, ''))), unaccent(lower(:keyword))) > 0
+                  OR similarity(unaccent(lower(a.username)), unaccent(lower(:keyword))) > 0
+                  OR unaccent(lower(s.title)) LIKE '%' || unaccent(lower(:keyword)) || '%'
+                  OR unaccent(lower(COALESCE(s.author, ''))) LIKE '%' || unaccent(lower(:keyword)) || '%'
+                  OR unaccent(lower(COALESCE(s.description, ''))) LIKE '%' || unaccent(lower(:keyword)) || '%'
+                  OR unaccent(lower(a.username)) LIKE '%' || unaccent(lower(:keyword)) || '%'
+              )
+            ORDER BY
+                COALESCE(s.rating_avg, 0) DESC,
+                COALESCE(s.play_count, 0) DESC,
+                ABS(COALESCE(s.energy, 0.45) - 0.45) ASC,
+                ABS(COALESCE(s.valence, 0.55) - 0.55) ASC,
+                ABS(COALESCE(s.acousticness, 0.6) - 0.6) ASC,
+                s.created_at DESC
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<Song> findSmartPlaylistCandidates(
+            @Param("keyword") String keyword,
+            @Param("genre") String genre,
+            @Param("limit") int limit);
+
 }

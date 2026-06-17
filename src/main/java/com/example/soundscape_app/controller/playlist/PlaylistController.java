@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.soundscape_app.dto.ai.SmartPlaylistRequest;
+import com.example.soundscape_app.dto.ai.SmartPlaylistResponse;
 import com.example.soundscape_app.dto.request.song.CreatePlaylistRequest;
 import com.example.soundscape_app.dto.response.song.PlaylistResponse;
 import com.example.soundscape_app.dto.response.song.PlaylistWithListSongResponse;
+import com.example.soundscape_app.service.playlist.AiPlaylistService;
 import com.example.soundscape_app.service.playlist.PlaylistService;
 
 import jakarta.validation.Valid;
@@ -26,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final AiPlaylistService aiPlaylistService;
 
     //-------------------- User ---------------------//
     @PostMapping("user/{playlistId}/songs/{songId}")
@@ -57,6 +61,14 @@ public class PlaylistController {
             @RequestHeader("Authorization") String authorizationHeader,
             @Valid @RequestBody CreatePlaylistRequest request) {
         PlaylistResponse response = playlistService.createPlayListWithFirstSong(authorizationHeader, request.getSongId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("user/ai-playlist")
+    public ResponseEntity<SmartPlaylistResponse> createAiPlaylist(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @Valid @RequestBody SmartPlaylistRequest request) {
+        SmartPlaylistResponse response = aiPlaylistService.createSmartPlaylist(authorizationHeader, request);
         return ResponseEntity.ok(response);
     }
 
