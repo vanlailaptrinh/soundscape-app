@@ -12,6 +12,18 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
+ARG GIT_COMMIT=unknown
+ARG IMAGE_TAG=latest
+ARG BUILD_TIME=unknown
+
+ENV APP_GIT_COMMIT=$GIT_COMMIT
+ENV APP_IMAGE_TAG=$IMAGE_TAG
+ENV APP_BUILD_TIME=$BUILD_TIME
+
+LABEL org.opencontainers.image.revision=$GIT_COMMIT
+LABEL org.opencontainers.image.version=$IMAGE_TAG
+LABEL org.opencontainers.image.created=$BUILD_TIME
+
 # Copy file jar từ bước build trước
 COPY --from=build /app/target/*.jar app.jar
 

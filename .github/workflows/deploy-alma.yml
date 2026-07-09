@@ -25,19 +25,31 @@ jobs:
           docker version
           docker compose version
 
+      - name: Prepare Docker image tag
+        run: |
+          echo "BACKEND_IMAGE_TAG=${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+          echo "BACKEND_IMAGE=vantrandevops/soundscape-app:${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+          echo "BUILD_TIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+
       - name: Build backend Docker image
         run: |
-          docker build -t vantrandevops/soundscape-app:latest_final_2 .
+          docker build \
+            --build-arg GIT_COMMIT="$GITHUB_SHA" \
+            --build-arg IMAGE_TAG="$BACKEND_IMAGE_TAG" \
+            --build-arg BUILD_TIME="$BUILD_TIME" \
+            -t "$BACKEND_IMAGE" \
+            -t vantrandevops/soundscape-app:latest \
+            .
 
       - name: Recreate backend container only
         run: |
           cd /opt/soundscape
-          docker compose up -d --no-deps --force-recreate backend
+          BACKEND_IMAGE_TAG="$BACKEND_IMAGE_TAG" docker compose up -d --no-deps --force-recreate backend
 
       - name: Check containers
         run: |
           cd /opt/soundscape
-          docker compose ps
+          BACKEND_IMAGE_TAG="$BACKEND_IMAGE_TAG" docker compose ps
           docker ps
 
       - name: Clean unused Docker images

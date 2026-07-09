@@ -34,7 +34,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    image: vantrandevops/soundscape-app:latest
+    image: vantrandevops/soundscape-app:${BACKEND_IMAGE_TAG:-latest}
     container_name: soundscape_backend
     ports:
       - "8080:8080"
